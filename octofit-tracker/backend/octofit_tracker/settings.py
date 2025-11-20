@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,10 +26,13 @@ SECRET_KEY = 'django-insecure--uxb-0fksqyb9!wx@bcj%($@#0vftj3eg_gifq_nbof3^udo!5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-source octofit-tracker/backend/venv/bin/activate
-# Allow all hosts
-ALLOWED_HOSTS = ['*']
+# AI added and then asked for its removal
+# source octofit-tracker/backend/venv/bin/activate
 
+# Allow only localhost for local Mac development
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+if os.environ.get('CODESPACE_NAME'):
+    ALLOWED_HOSTS.append(f"{os.environ.get('CODESPACE_NAME')}-8000.app.github.dev")
 
 # Application definition
 

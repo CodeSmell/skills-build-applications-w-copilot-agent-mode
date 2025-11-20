@@ -16,6 +16,8 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from . import views
+import os
 from rest_framework.routers import DefaultRouter
 
 
@@ -33,19 +35,23 @@ router.register(r'workouts', views.WorkoutViewSet)
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
+
+# Example endpoint for API root using Codespace environment variable
 @api_view(['GET'])
-def local_api_root(request, format=None):
-    base_url = request.build_absolute_uri('/api/')
-    return Response({
-        'users': f'{base_url}users/',
-        'teams': f'{base_url}teams/',
-        'activities': f'{base_url}activities/',
-        'leaderboard': f'{base_url}leaderboard/',
-        'workouts': f'{base_url}workouts/',
+def api_root(request, format=None):
+    from django.http import JsonResponse
+    codespace_name = os.environ.get('CODESPACE_NAME', 'localhost')
+    base_url = f"https://{codespace_name}-8000.app.github.dev" if codespace_name != 'localhost' else "http://localhost:8000"
+    return JsonResponse({
+        'users': f'{base_url}/api/users/',
+        'activities': f'{base_url}/api/activities/',
+        'teams': f'{base_url}/api/teams/',
+        'leaderboard': f'{base_url}/api/leaderboard/',
+        'workouts': f'{base_url}/api/workouts/',
     })
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('', local_api_root, name='api-root'),
+    path('', api_root, name='api-root'),
 ]
